@@ -1,0 +1,32 @@
+{
+  "templates": [
+    {
+      "id": "2",
+      "name": "singleUser",
+      "title": { "en": "Single User Request", "fa": "فرم درخواست تک عضوی" },
+      "description": {
+        "en": "Single contact request form",
+        "fa": "فرم درخواست تک عضوی"
+      },
+      "icon": "icon-user",
+      "allowCustomFields": true,
+      "fields": []
+    },
+    {
+      "id": "3",
+      "name": "team",
+      "title": { "en": "Team Request", "fa": "درخواست تیمی" },
+      "description": {
+        "en": "Team request form",
+        "fa": "درخواست به صورت تیمی"
+      },
+      "icon": "icon-users",
+      "fields": [],
+      "allowCustomFields": true
+    }
+  ],
+  "contentTypes": [],
+  "contents": [],
+  "users": [],
+  "assets": []
+}

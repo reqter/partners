@@ -1,0 +1,29 @@
+@import "./../../styles/mixins.scss";
+.form-group {
+  div {
+    width: 100% !important;
+  }
+}
+.DatePicker {
+  z-index: 1000;
+  input {
+    //   width: 100%
+  }
+}
+.rangeDate {
+  display: flex;
+  &__left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    @include variable(datetime-range-margin, margin, 0 10px);
+  }
+  &__right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  input {
+    font-size: 15px;
+  }
+}
