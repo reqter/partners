@@ -6,7 +6,7 @@ const widthResolver = WrappedComponent => {
 
   return props => {
     const { t, currentLang } = useLocale();
-    const [token] = useCookie("reqter_token");
+    const [token] = useCookie("partner_token");
     const [{ userInfo }, dispatch] = useGlobalState();
     const [loading, toggleLoading] = useState(userInfo ? false : true);
     const [error, setError] = useState();
@@ -21,11 +21,11 @@ const widthResolver = WrappedComponent => {
           const userInfo = result;
           dispatch({
             type: "SET_USERINFO",
-            value: userInfo,
+            value: userInfo
           });
           dispatch({
             type: "SET_SPACEINFO",
-            value: spaceInfo,
+            value: spaceInfo
           });
           toggleLoading(false);
         })
@@ -45,6 +45,7 @@ const widthResolver = WrappedComponent => {
             "There is an error which has occured in the request.\ntry again "
           );
           toggleLoading(false);
+          props.history.replace(`/${currentLang}/login`);
         })
         .notFound(result => {
           console.log("not found");

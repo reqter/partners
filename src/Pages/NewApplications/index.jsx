@@ -1,20 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useGlobalState, useLocale } from "../../hooks";
-import {
-  getForms,
-  filterRequests,
-  deleteForm,
-  publish,
-  unPublish,
-  archive,
-  unArchive
-} from "../../Api/request-api";
+import { getNewRequests } from "../../Api/main-api";
 import "./styles.scss";
 
-import { Alert, CircleSpinner, DateFormatter, Image } from "../../components";
-import { Empty } from "../../components/Commons/ErrorsComponent";
+import Alert from "../../components/PopupAlert";
+import CircleSpinner from "../../components/CircleSpinner";
+import SquareSpinner from "../../components/SquareSpinner";
+import Image from "../../components/Image";
+import DateFormatter from "../../components/DateFormatter";
+import { Empty, Wrong } from "../../components/Commons/ErrorsComponent";
 import ItemSkeleton from "./ItemSkeleton";
-import FormItem from "./FormItem";
+import Item from "./Item";
 
 const NewApplications = props => {
   const { appLocale, t, currentLang } = useLocale();
@@ -28,7 +24,7 @@ const NewApplications = props => {
   const [{ spaceInfo }, dispatch] = useGlobalState();
 
   const [spinner, toggleSpinner] = useState(true);
-  const [forms, setForms] = useState();
+  const [data, setData] = useState();
   const [error, setError] = useState();
   const [alertData, setAlertData] = useState();
   const [searchText, setSearchText] = useState();
@@ -41,70 +37,70 @@ const NewApplications = props => {
   }, []);
 
   function loadRequests() {
-    getForms()
+    getNewRequests()
       .onOk(result => {
         if (!didCancel) {
           toggleSpinner(false);
-          setForms(result);
+          if (result) {
+            setData(result);
+          } else
+            setError({
+              title: t("GET_APP_ERROR_RESULT"),
+              message: t("GET_APP_ERROR_RESULT_MSG")
+            });
         }
       })
       .onServerError(result => {
         if (!didCancel) {
           toggleSpinner(false);
-          dispatch({
-            type: "ADD_NOTIFY",
-            value: {
-              type: "error",
-              message: t("CONTENTS_ON_SERVER_ERROR")
-            }
+          setError({
+            title: t("INTERNAL_SERVER_ERROR"),
+            message: t("INTERNAL_SERVER_ERROR_MSG")
           });
         }
       })
       .onBadRequest(result => {
         if (!didCancel) {
           toggleSpinner(false);
-          dispatch({
-            type: "ADD_NOTIFY",
-            value: {
-              type: "error",
-              message: t("CONTENTS_ON_BAD_REQUEST")
-            }
+          setError({
+            title: t("BAD_REQUEST"),
+            message: t("BAD_REQUEST_MSG")
           });
         }
       })
       .unAuthorized(result => {
         if (!didCancel) {
           toggleSpinner(false);
-          dispatch({
-            type: "ADD_NOTIFY",
-            value: {
-              type: "warning",
-              message: t("CONTENTS_UN_AUTHORIZED")
-            }
+          setError({
+            title: t("UNKNOWN_ERROR"),
+            message: t("UNKNOWN_ERROR_MSG")
+          });
+        }
+      })
+      .notFound(result => {
+        if (!didCancel) {
+          toggleSpinner(false);
+          setError({
+            title: t("NOT_FOUND"),
+            message: t("NOT_FOUND_MSG")
           });
         }
       })
       .unKnownError(result => {
         if (!didCancel) {
           toggleSpinner(false);
-          dispatch({
-            type: "ADD_NOTIFY",
-            value: {
-              type: "warning",
-              message: t("UNKNOWN_ERROR")
-            }
+          setError({
+            title: t("UNKNOWN_ERROR"),
+            message: t("UNKNOWN_ERROR_MSG")
           });
         }
       })
       .onRequestError(result => {
         if (!didCancel) {
           toggleSpinner(false);
-          dispatch({
-            type: "ADD_NOTIFY",
-            value: {
-              type: "warning",
-              message: t("ON_REQUEST_ERROR")
-            }
+          setError({
+            title: t("ON_REQUEST_ERROR"),
+            message: t("ON_REQUEST_ERROR_MSG")
           });
         }
       })
@@ -146,279 +142,11 @@ const NewApplications = props => {
       );
   }
 
-  function openFormPage(contentType) {
-    props.history.push({
-      pathname: "/" + currentLang + "/form/new"
-    });
+  function handleItemViewClicked(row) {
+    props.history.push(`/${currentLang}/request/view/${row._id}`);
   }
-  function handleDeleteForm(row) {
-    setAlertData({
-      type: "error",
-      title: t("FORMS_DELETE_ALERT_TITLE"),
-      message: t("FORMS_DELETE_ALERT_DESC"),
-      isAjaxCall: true,
-      okTitle: t("REMOVE"),
-      cancelTitle: t("DONT_REMOVE"),
-      onOk: () => {
-        deleteForm()
-          .onOk(result => {
-            loadRequests();
-            setAlertData();
-            dispatch({
-              type: "ADD_NOTIFY",
-              value: {
-                type: "success",
-                message: t("FORMS_DELETE_ON_OK")
-              }
-            });
-          })
-          .onServerError(result => {
-            setAlertData();
-            dispatch({
-              type: "ADD_NOTIFY",
-              value: {
-                type: "error",
-                message: t("INTERNAL_SERVER_ERROR")
-              }
-            });
-          })
-          .onBadRequest(result => {
-            setAlertData();
-            dispatch({
-              type: "ADD_NOTIFY",
-              value: {
-                type: "error",
-                message: t("BAD_REQUEST")
-              }
-            });
-          })
-          .unAuthorized(result => {
-            setAlertData();
-          })
-          .notFound(result => {
-            setAlertData();
-            dispatch({
-              type: "ADD_NOTIFY",
-              value: {
-                type: "error",
-                message: t("NOT_FOUND")
-              }
-            });
-          })
-          .call(spaceInfo.id, row._id);
-      },
-      onCancel: () => {
-        setAlertData();
-      }
-    });
-  }
-
-  function handleEditForm(row) {
-    props.history.push({
-      pathname: `/${currentLang}/form/edit/${row._id}`
-    });
-  }
-  function viewContent(row) {
-    props.history.push({
-      pathname: `/${currentLang}/form/view/${row._id}`,
-      viewMode: true
-    });
-  }
-  function handleArchiveForm(row) {
-    archive()
-      .onOk(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "success",
-            message: t("The content is archived")
-          }
-        });
-      })
-      .onServerError(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Internal server error")
-          }
-        });
-      })
-      .onBadRequest(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Bad request")
-          }
-        });
-      })
-      .unAuthorized(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Un Authorized")
-          }
-        });
-      })
-      .notFound(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Asset not found")
-          }
-        });
-      })
-      .call(spaceInfo.id, row._id);
-  }
-  function handleUnArchiveForm(row) {
-    unArchive()
-      .onOk(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "success",
-            message: t("The content is unarchived")
-          }
-        });
-      })
-      .onServerError(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Internal server error")
-          }
-        });
-      })
-      .onBadRequest(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Bad request")
-          }
-        });
-      })
-      .unAuthorized(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Un Authorized")
-          }
-        });
-      })
-      .notFound(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Asset not found")
-          }
-        });
-      })
-      .call(spaceInfo.id, row._id);
-  }
-  function handlePublishForm(row) {
-    publish()
-      .onOk(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "success",
-            message: t("The content is published")
-          }
-        });
-      })
-      .onServerError(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Internal server error")
-          }
-        });
-      })
-      .onBadRequest(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Bad request")
-          }
-        });
-      })
-      .unAuthorized(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Un Authorized")
-          }
-        });
-      })
-      .notFound(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Asset not found")
-          }
-        });
-      })
-      .call(spaceInfo.id, row._id);
-  }
-  function handleUnPublishForm(row) {
-    unPublish()
-      .onOk(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "success",
-            message: t("The content is unpublished")
-          }
-        });
-      })
-      .onServerError(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Internal server error")
-          }
-        });
-      })
-      .onBadRequest(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Bad request")
-          }
-        });
-      })
-      .unAuthorized(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Un Authorized")
-          }
-        });
-      })
-      .notFound(result => {
-        dispatch({
-          type: "ADD_NOTIFY",
-          value: {
-            type: "error",
-            message: t("Asset not found")
-          }
-        });
-      })
-      .call(spaceInfo.id, row._id);
+  function handleItemOpenClicked(row) {
+    props.history.push(`/${currentLang}/offer/new/${row._id}`);
   }
   //#endregion controller
 
@@ -435,47 +163,41 @@ const NewApplications = props => {
               <input
                 type="text"
                 className="form-control"
-                placeholder={t("FORMS_SEARCH_PLACEHOLDER")}
+                placeholder={t("NEW_APPS_SEARCH_PLACEHOLDER")}
                 value={searchText}
                 onChange={e => setSearchText(e.target.value)}
               />
             </div>
-            <button className="btn btn-primary" onClick={openFormPage}>
-              {t("FORMS_BTN_NEW")}
-            </button>
           </div>
         </div>
         <div className="p-content">
           {spinner ? (
-            [1, 2, 3, 4, 5].map(sk => <ItemSkeleton key={sk} />)
-          ) : !forms || forms.length === 0 ? (
-            <div className="forms__empty">
-              <Empty />
-              <span className="forms__empty__title">{t("EMPTY_LIST")}</span>
-              <span className="forms__empty__info">
-                {t("FORMS_EMPTY_LIST_INFO")}
-              </span>
-              <button className="btn btn-primary btn-sm" onClick={openFormPage}>
-                {t("FORMS_EMPTY_LIST_BTN")}
-              </button>
+            <div className="page-loading">
+              <SquareSpinner />
+              <h4>{t("NEW_APPS_LOADING_TEXT")}</h4>
             </div>
-          ) : !error ? (
+          ) : error ? (
+            <div className="page-list-error animated fadeIn">
+              <Wrong />
+              <h2>{error.title}</h2>
+              <span>{error.message}</span>
+            </div>
+          ) : !data || data.length === 0 ? (
+            <div className="page-empty-list animated fadeIn">
+              <Empty />
+              <h2>{t("NEW_APPS_EMPTY_LIST_TITLE")}</h2>
+              <span>{t("NEW_APPS_EMPTY_LIST_MSG")}</span>
+            </div>
+          ) : (
             <div className="forms">
-              {forms.map(f => (
-                <FormItem
-                  key={f._id}
-                  data={f}
-                  onDeleteForm={handleDeleteForm}
-                  onEditForm={handleEditForm}
-                  onPublishForm={handlePublishForm}
-                  onUnPublishForm={handleUnPublishForm}
-                  onArchiveForm={handleArchiveForm}
-                  onUnArchiveForm={handleUnArchiveForm}
+              {data.map(r => (
+                <Item
+                  data={r}
+                  onViewClicked={handleItemViewClicked}
+                  onOpenClicked={handleItemOpenClicked}
                 />
               ))}
             </div>
-          ) : (
-            <div />
           )}
         </div>
       </div>

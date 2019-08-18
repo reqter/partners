@@ -1,9 +1,10 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
-import { useCookie } from "../hooks";
+import { useCookie, useLocale } from "../hooks";
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-  const [token] = useCookie("reqter_token");
+  const { currentLang } = useLocale();
+  const [token] = useCookie("partner_token");
   return token ? (
     <Route {...rest} />
   ) : (
@@ -11,8 +12,8 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
       render={props => (
         <Redirect
           to={{
-            pathname: "/login",
-            state: { from: props.location },
+            pathname: `/${currentLang}/login`,
+            state: { from: props.location }
           }}
         />
       )}
@@ -20,4 +21,4 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   );
 };
 
-export default PrivateRoute
+export default PrivateRoute;

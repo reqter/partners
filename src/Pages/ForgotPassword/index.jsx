@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useGlobalState, useLocale } from "./../../hooks";
 import { signup } from "./../../Api/account-api";
 import { CircleSpinner } from "./../../components";
-import "./styles.scss";
 
 const ForgotPassword = props => {
   const { appLocale, t, currentLang } = useLocale();
@@ -43,8 +42,8 @@ const ForgotPassword = props => {
             type: "ADD_NOTIFY",
             value: {
               type: "error",
-              message: t("LOGIN_ON_SERVER_ERROR"),
-            },
+              message: t("LOGIN_ON_SERVER_ERROR")
+            }
           });
         })
         .onBadRequest(result => {
@@ -53,8 +52,8 @@ const ForgotPassword = props => {
             type: "ADD_NOTIFY",
             value: {
               type: "error",
-              message: t("LOGIN_ON_BAD_REQUEST"),
-            },
+              message: t("LOGIN_ON_BAD_REQUEST")
+            }
           });
         })
         .unAuthorized(result => {
@@ -63,8 +62,8 @@ const ForgotPassword = props => {
             type: "ADD_NOTIFY",
             value: {
               type: "error",
-              message: t("LOGIN_UN_AUTHORIZED"),
-            },
+              message: t("LOGIN_UN_AUTHORIZED")
+            }
           });
         })
         .notFound(result => {
@@ -73,8 +72,8 @@ const ForgotPassword = props => {
             type: "ADD_NOTIFY",
             value: {
               type: "error",
-              message: t("LOGIN_NOT_FOUND"),
-            },
+              message: t("LOGIN_NOT_FOUND")
+            }
           });
         })
         .call(userName);
@@ -88,106 +87,117 @@ const ForgotPassword = props => {
   //#endregion second tab
   return (
     <div className="wrapper">
-      <div className="center">
-        <div className="header">
-          <span className="header-title">
-            {tab === 1 && t("FORGOT_PASS_TITLE")}
-            {tab === 2 && t("SIGNUP_SUCCESS_TITLE")}
-          </span>
+      <div className="wrapper__header">
+        <div className="wrapper__header__img">
+          <img
+            src="https://d3q0x13th15b8d.cloudfront.net/assets/img/main-icons/xcoupa-community-icon.png.pagespeed.ic.4y6fwGlM7c.png"
+            alt=""
+          />
         </div>
-        <div className="formBody">
-          {tab === 1 && (
-            <form onSubmit={signupUser}>
-              <div className="message">{t("FORGOT_PASS_MESSAGE")}</div>
-              <div className="form-group">
-                <label>{t("LOGIN_EMAIL_INPUT_TITLE")}</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  id="emailInput"
-                  aria-describedby="emailHelp"
-                  placeholder={t("LOGIN_EMAIL_INPUT_PLACEHOLDER")}
-                  onChange={handleEmailChanged}
-                  autoFocus
-                />
-                <small id="emailHelp" className="form-text text-muted">
-                  {t("LOGIN_EMAIL_INPUT_DESCRIPTION")}
-                </small>
-              </div>
-
-              <button
-                type="submit"
-                className="btn btn-primary btn-block btn-submit"
-                disabled={
-                  userName === undefined || userName.length === undefined
-                    ? true
-                    : false
-                }
-              >
-                <CircleSpinner show={spinner} size="small" />
-                {!spinner ? t("FORGOT_PASS_SEND_EMAIL_BTN") : null}
-              </button>
-            </form>
-          )}
-          {tab === 2 && (
-            <form>
-              <div className="form-group">
-                <label>{t("LOGIN_EMAIL_INPUT_TITLE")}</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  id="emailInput"
-                  aria-describedby="emailHelp"
-                  placeholder={t("LOGIN_EMAIL_INPUT_PLACEHOLDER")}
-                  onChange={handleEmailChanged}
-                />
-                <small id="emailHelp" className="form-text text-muted">
-                  {t("LOGIN_EMAIL_INPUT_DESCRIPTION")}
-                </small>
-              </div>
-
-              <button
-                type="button"
-                className="btn btn-primary btn-block btn-submit"
-                onClick={signupUser}
-                disabled={
-                  userName === undefined || userName.length === undefined
-                    ? true
-                    : false
-                }
-              >
-                <CircleSpinner show={spinner} size="small" />
-                {!spinner ? t("LOGIN_SUBMIT_BTN") : null}
-              </button>
-            </form>
-          )}
-          {tab === 3 && (
-            <div className="signupSuccess animated fadeIn">
-              <span className="welcomeMessage">
-                {t("SIGNUP_SUCCESS_MESSAGE")}
-              </span>
-              <button
-                type="button"
-                className="btn btn-primary btn-block btn-submit"
-                onClick={navToLogin}
-              >
-                {t("SIGNUP_SUCCESS_BTN")}
-              </button>
-            </div>
-          )}
-        </div>
+        <span>{t("BRAND_NAME")}</span>
       </div>
-      {tab === 1 && (
-        <div className="signUpBox">
-          <span>
-            {t("SIGNUP_LOGIN_LINK_TITLE")}
-            &nbsp;
-          </span>
-          <Link to={"/" + currentLang + "/login"}>
-            {t("SIGNUP_LOGIN_LINK")}
-          </Link>
+      <div className="wrapper__body">
+        <div className="wrapper__center animated fadeIn">
+          <div className="header">
+            <span className="header-title">
+              {tab === 1 && t("FORGOT_PASS_TITLE")}
+              {tab === 2 && t("SIGNUP_SUCCESS_TITLE")}
+            </span>
+          </div>
+          <div className="formBody">
+            {tab === 1 && (
+              <form onSubmit={signupUser}>
+                <div className="message">{t("FORGOT_PASS_MESSAGE")}</div>
+                <div className="form-group">
+                  <label>{t("LOGIN_EMAIL_INPUT_TITLE")}</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="emailInput"
+                    aria-describedby="emailHelp"
+                    placeholder={t("LOGIN_EMAIL_INPUT_PLACEHOLDER")}
+                    onChange={handleEmailChanged}
+                    autoFocus
+                  />
+                  <small id="emailHelp" className="form-text text-muted">
+                    {t("LOGIN_EMAIL_INPUT_DESCRIPTION")}
+                  </small>
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn btn-primary btn-block btn-submit"
+                  disabled={
+                    userName === undefined || userName.length === undefined
+                      ? true
+                      : false
+                  }
+                >
+                  <CircleSpinner show={spinner} size="small" />
+                  {!spinner ? t("FORGOT_PASS_SEND_EMAIL_BTN") : null}
+                </button>
+              </form>
+            )}
+            {tab === 2 && (
+              <form>
+                <div className="form-group">
+                  <label>{t("LOGIN_EMAIL_INPUT_TITLE")}</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="emailInput"
+                    aria-describedby="emailHelp"
+                    placeholder={t("LOGIN_EMAIL_INPUT_PLACEHOLDER")}
+                    onChange={handleEmailChanged}
+                  />
+                  <small id="emailHelp" className="form-text text-muted">
+                    {t("LOGIN_EMAIL_INPUT_DESCRIPTION")}
+                  </small>
+                </div>
+
+                <button
+                  type="button"
+                  className="btn btn-primary btn-block btn-submit"
+                  onClick={signupUser}
+                  disabled={
+                    userName === undefined || userName.length === undefined
+                      ? true
+                      : false
+                  }
+                >
+                  <CircleSpinner show={spinner} size="small" />
+                  {!spinner ? t("LOGIN_SUBMIT_BTN") : null}
+                </button>
+              </form>
+            )}
+            {tab === 3 && (
+              <div className="signupSuccess animated fadeIn">
+                <span className="welcomeMessage">
+                  {t("SIGNUP_SUCCESS_MESSAGE")}
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-block btn-submit"
+                  onClick={navToLogin}
+                >
+                  {t("SIGNUP_SUCCESS_BTN")}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-      )}
+        {tab === 1 && (
+          <div className="signUpBox">
+            <span>
+              {t("SIGNUP_LOGIN_LINK_TITLE")}
+              &nbsp;
+            </span>
+            <Link to={"/" + currentLang + "/login"}>
+              {t("SIGNUP_LOGIN_LINK")}
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

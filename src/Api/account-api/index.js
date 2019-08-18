@@ -1,4 +1,5 @@
 import { storageManager } from './../../services'
+import setAuthToken from "./../../utils/setAuthorizationToken";
 
 const config = process.env
 const login_url =
@@ -76,6 +77,7 @@ export function login () {
       const result = await rawResponse.json()
       switch (status) {
         case 200:
+          setAuthToken(result.access_token);
           _onOk(result)
           break
         case 400:

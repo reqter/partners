@@ -4,7 +4,7 @@ import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
 //
-import { useLocale } from "./../../hooks";
+import { useLocale } from "../../hooks";
 import { DateFormatter } from "../../components";
 //
 export default function FormItem(props) {
@@ -119,7 +119,7 @@ export default function FormItem(props) {
             </DropdownMenu>
           </Dropdown>
         </div>
-        <div className="formItem__status">{t(data.status)}</div>
+        {/* <div className="formItem__status">{t(data.status)}</div> */}
       </div>
     </div>
   );

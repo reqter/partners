@@ -5,12 +5,12 @@ import { login } from "./../../Api/account-api";
 //
 import { CircleSpinner } from "./../../components";
 import "./styles.scss";
-import { useGlobalState,useCookie, useLocale } from "./../../hooks";
+import { useGlobalState, useCookie, useLocale } from "./../../hooks";
 
 const Login = props => {
-  const [{},dispatch]=useGlobalState()
+  const [{}, dispatch] = useGlobalState();
   const { appLocale, t, currentLang } = useLocale();
-  const [token, setToken] = useCookie("reqter_token");
+  const [token, setToken] = useCookie("partner_token");
   const [spinner, toggleSpinner] = useState(false);
   const [userName, setUserName] = useState();
   const [password, setPassword] = useState();
@@ -34,7 +34,7 @@ const Login = props => {
             setToken(result.access_token);
             dispatch({
               type: "SET_AUTHENTICATED",
-              value: true,
+              value: true
             });
             setRedirectToReferrer(true);
           } catch (error) {
@@ -47,8 +47,8 @@ const Login = props => {
             type: "ADD_NOTIFY",
             value: {
               type: "error",
-              message: t("LOGIN_ON_SERVER_ERROR"),
-            },
+              message: t("LOGIN_ON_SERVER_ERROR")
+            }
           });
         })
         .onBadRequest(result => {
@@ -57,8 +57,8 @@ const Login = props => {
             type: "ADD_NOTIFY",
             value: {
               type: "error",
-              message: t("LOGIN_ON_BAD_REQUEST"),
-            },
+              message: t("LOGIN_ON_BAD_REQUEST")
+            }
           });
         })
         .unAuthorized(result => {
@@ -67,8 +67,8 @@ const Login = props => {
             type: "ADD_NOTIFY",
             value: {
               type: "error",
-              message: t("LOGIN_UN_AUTHORIZED"),
-            },
+              message: t("LOGIN_UN_AUTHORIZED")
+            }
           });
         })
         .notFound(result => {
@@ -77,8 +77,8 @@ const Login = props => {
             type: "ADD_NOTIFY",
             value: {
               type: "error",
-              message: result.error ? result.error : t("LOGIN_NOT_FOUND"),
-            },
+              message: result.error ? result.error : t("LOGIN_NOT_FOUND")
+            }
           });
         })
         .call(userName, password);
@@ -88,7 +88,7 @@ const Login = props => {
     if (redirectToReferrer) {
       props.history.replace(
         !props.location.state
-          ? "/" + currentLang
+          ? "/" + currentLang + "/newApplications"
           : props.location.state.from.pathname
       );
     }
@@ -99,66 +99,79 @@ const Login = props => {
 
   return (
     <div className="wrapper">
-      <div className="center">
-        <div className="header">
-          <span className="header-title">{t("LOGIN_TITLE")}</span>
+      <div className="wrapper__header">
+        <div className="wrapper__header__img">
+          <img
+            src="https://d3q0x13th15b8d.cloudfront.net/assets/img/main-icons/xcoupa-community-icon.png.pagespeed.ic.4y6fwGlM7c.png"
+            alt=""
+          />
         </div>
-        <div className="formBody">
-          <form id="loginForm" onSubmit={handleLoginUser}>
-            <div className="form-group">
-              <label>{t("LOGIN_EMAIL_INPUT_TITLE")}</label>
-              <input
-                type="email"
-                className="form-control"
-                aria-describedby="emailHelp"
-                placeholder={t("LOGIN_EMAIL_INPUT_PLACEHOLDER")}
-                onChange={handleEmailChanged}
-                autoFocus
-              />
-              <small className="form-text text-muted">
-                {t("LOGIN_EMAIL_INPUT_DESCRIPTION")}
-              </small>
-            </div>
-            <div className="form-group">
-              <label>{t("LOGIN_PASSWORD_INPUT")}</label>
-              <input
-                type="password"
-                className="form-control"
-                placeholder={t("LOGIN_PASSWORD_INPUT_PLACEHOLDER")}
-                onChange={handlePasswordChanged}
-              />
-              <small className="form-text text-muted">
-                {t("LOGIN_PASSWORD_INPUT_DESCRIPTION")}
-              </small>
-            </div>
-            <Link to={"/" + currentLang + "/forgotPassword"}>
-              {t("LOGIN_FORGOT_PASS")}
-            </Link>
-            <button
-              type="submit"
-              className="btn btn-primary btn-block btn-submit"
-              form="loginForm"
-              disabled={
-                userName === undefined ||
-                password === undefined ||
-                userName.length === 0 ||
-                password.length === 0
-                  ? true
-                  : false
-              }
-            >
-              <CircleSpinner show={spinner} size="small" />
-              {!spinner ? t("LOGIN_SUBMIT_BTN") : null}
-            </button>
-          </form>
-        </div>
+        <span>{t("BRAND_NAME")}</span>
       </div>
+      <div className="wrapper__body">
+        <div className="wrapper__center animated fadeIn">
+          <div className="header">
+            <span className="header-title">{t("LOGIN_TITLE")}</span>
+          </div>
+          <div className="formBody">
+            <form id="loginForm" onSubmit={handleLoginUser}>
+              <div className="form-group">
+                <label>{t("LOGIN_EMAIL_INPUT_TITLE")}</label>
+                <input
+                  type="email"
+                  className="form-control emailInput"
+                  placeholder={t("LOGIN_EMAIL_INPUT_PLACEHOLDER")}
+                  onChange={handleEmailChanged}
+                  autoFocus
+                />
+                <small className="form-text text-muted">
+                  {t("LOGIN_EMAIL_INPUT_DESCRIPTION")}
+                </small>
+              </div>
+              <div className="form-group">
+                <label>{t("LOGIN_PASSWORD_INPUT")}</label>
+                <input
+                  type="password"
+                  className="form-control"
+                  placeholder={t("LOGIN_PASSWORD_INPUT_PLACEHOLDER")}
+                  onChange={handlePasswordChanged}
+                />
+                <small className="form-text text-muted">
+                  {t("LOGIN_PASSWORD_INPUT_DESCRIPTION")}
+                </small>
+              </div>
+              <Link to={"/" + currentLang + "/forgotPassword"}>
+                {t("LOGIN_FORGOT_PASS")}
+              </Link>
+              <button
+                type="submit"
+                className="btn btn-primary btn-block btn-submit"
+                form="loginForm"
+                disabled={
+                  userName === undefined ||
+                  password === undefined ||
+                  userName.length === 0 ||
+                  password.length < 6
+                    ? true
+                    : false
+                }
+              >
+                <CircleSpinner show={spinner} size="small" />
+                {!spinner ? t("LOGIN_SUBMIT_BTN") : null}
+              </button>
+            </form>
+          </div>
+        </div>
 
-      <div className="signUpBox">
-        <span>{t("LOGIN_SIGNUP_LINK_TITLE")}&nbsp;</span>
-        <Link to={"/" + currentLang + "/signup"}>{t("LOGIN_SIGNUP_LINK")}</Link>
+        <div className="wrapper__signUpBox">
+          <span>{t("LOGIN_SIGNUP_LINK_TITLE")}&nbsp;</span>
+          <Link to={"/" + currentLang + "/signup"}>
+            {t("LOGIN_SIGNUP_LINK")}
+          </Link>
+        </div>
       </div>
+    
     </div>
   );
 };
-export default Login
+export default Login;

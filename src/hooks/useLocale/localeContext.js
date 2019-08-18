@@ -1,27 +1,35 @@
-import React, { useState } from 'react'
-import en from './locales/en'
-import fa from './locales/fa'
-const LocaleContext = React.createContext([{}, () => {}])
-const LocaleProvider = props => {
-  const fa_lang = {
+import React, { useState } from "react";
+import useLayout from "./../useLayout";
+import en from "./locales/en";
+import fa from "./locales/fa";
+//
+const LocaleContext = React.createContext([{}, () => {}]);
+//
+const langs = {
+  fa: {
     appLocale: fa,
-    currentLang: 'fa',
-    direction: 'rtl'
-  }
-  const en_lang = {
+    currentLang: "fa",
+    direction: "rtl"
+  },
+  en: {
     appLocale: en,
-    currentLang: 'en',
-    direction: 'ltr'
+    currentLang: "en",
+    direction: "ltr"
   }
+};
+
+const LocaleProvider = props => {
+  const l = langs[props.lang];
+  useLayout(l ? l.direction : langs["fa"].direction);
 
   const [state, setState] = useState(() => {
-    return props.lang === 'fa' ? fa_lang : en_lang
-  })
+    return l ? l : langs["fa"];
+  });
   return (
     <LocaleContext.Provider value={[state, setState]}>
       {props.children}
     </LocaleContext.Provider>
-  )
-}
+  );
+};
 
-export { LocaleContext, LocaleProvider }
+export { LocaleContext, LocaleProvider };

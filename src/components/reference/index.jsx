@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Select, { components } from "react-select";
-import AsyncCreatableSelect from "react-select/lib/AsyncCreatable";
+// import AsyncCreatableSelect from "react-select/lib/AsyncCreatable";
 import "./styles.scss";
-import { useGlobalState,useLocale } from "./../../hooks";
+import { useGlobalState, useLocale } from "./../../hooks";
 import { filterContents } from "./../../Api/content-api";
 import Image from "../Image";
 
@@ -15,15 +15,11 @@ const ReferenceInput = props => {
   const [values, setValues] = useState();
 
   // set value to selected otions
+  useMemo(() => {
+    if (field.isRequired === true)
+      if (props.init) props.init(field.name, false);
+  }, []);
   useEffect(() => {
-    if (formData[field.name]) {
-      if (field.isRequired === true)
-        if (props.init) props.init(field.name, true);
-    } else {
-      if (field.isRequired === true)
-        if (props.init) props.init(field.name, false);
-    }
-
     if (spaceInfo) {
       filterContents()
         .onOk(result => {
@@ -152,6 +148,7 @@ const ReferenceInput = props => {
 };
 
 export default ReferenceInput;
+
 const SingleValue = props => {
   const { appLocale, t, currentLang } = useLocale();
   const { data } = props;
@@ -159,9 +156,9 @@ const SingleValue = props => {
     <components.SingleValue {...props}>
       <div className="options-single-selected">
         <div className="custome-select-selected">
-          {data.fields["thumbnail"] && data.fields["thumbnail"].length > 0 && (
+          {data.contentType["media"] && data.contentType["media"].length > 0 && (
             <div className="selectedItemImage">
-              <Image url={data.fields["thumbnail"][0][currentLang]} />
+              <img src={data.contentType["media"][0][currentLang]} alt="" />
             </div>
           )}
           <div className="selectedItemName">
@@ -178,9 +175,9 @@ const MultiValueLabel = props => {
   return (
     <components.MultiValueLabel {...props}>
       <div className="custome-select-selected" key={data.sys.id}>
-        {data.fields["thumbnail"] && data.fields["thumbnail"].length > 0 && (
+        {data.contentType["media"] && data.contentType["media"].length > 0 && (
           <div className="selectedItemImage">
-            <Image url={data.fields["thumbnail"][0][currentLang]} />
+            <img src={data.contentType["media"][0][currentLang]} alt="" />
           </div>
         )}
         <div className="selectedItemName">
@@ -197,8 +194,8 @@ const CustomOption = ({ innerProps, isDisabled, data }) => {
     return (
       <div {...innerProps} className="custom-select-item">
         <div className="imageItem">
-          {data.fields["thumbnail"] && data.fields["thumbnail"].length > 0 ? (
-            <Image url={data.fields["thumbnail"][0][currentLang]} />
+          {data.contentType["media"] && data.contentType["media"].length > 0 ? (
+            <img src={data.contentType["media"][0][currentLang]} alt="" />
           ) : (
             <div className="imageItem-empty">No Image</div>
           )}

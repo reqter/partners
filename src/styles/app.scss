@@ -15,8 +15,31 @@
 body {
   font-family: Samim, OpenSance;
   overflow-x: hidden;
-  min-width: 992px;
+  // min-width: 992px;
   overflow: auto;
+  background: whitesmoke;
+}
+.emailInput {
+  text-align: left;
+}
+.emailInput::placeholder {
+  @include variable(text-align, text-align, left);
+}
+.page-loading {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px;
+}
+.page-list-error {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
 }
 *,
 html,
