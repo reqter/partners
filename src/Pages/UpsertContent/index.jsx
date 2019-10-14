@@ -287,7 +287,7 @@ const UpsertContent = props => {
     }
   }
   function exit() {
-    props.history.push(`/${currentLang}/newApplications`);
+    props.history.push(`/newApplications`);
   }
 
   function upsertItem(closePage) {
@@ -426,11 +426,19 @@ const UpsertContent = props => {
                 {item &&
                   item.contentType &&
                   item.contentType.fields &&
-                  item.contentType.fields.map(field => (
-                    <div key={field.id} className="rowItem">
-                      {getFieldItem(field)}
-                    </div>
-                  ))}
+                  item.contentType.fields.map(field => {
+                    if (
+                      !field.access ||
+                      field.access.includes("admin") ||
+                      field.access.includes("partners")
+                    )
+                      return (
+                        <div key={field.id} className="rowItem">
+                          {getFieldItem(field)}
+                        </div>
+                      );
+                    return null;
+                  })}
                 {!viewMode && (
                   <div className="form-submit-btns">
                     <button

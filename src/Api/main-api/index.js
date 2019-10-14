@@ -3,7 +3,6 @@ const config = process.env;
 const baseUrl = config.REACT_APP_REQUESTS_BASE_URL;
 const getAllURL =
   config.REACT_APP_CONTENTS_BASE_URL + config.REACT_APP_CONTENTS_GET_ALL;
-const data = require("../data.json");
 
 export function getNewRequests() {
   let _onOkCallBack;
@@ -49,43 +48,41 @@ export function getNewRequests() {
     }
   }
 
-  const _call = async (spaceId, token) => {
-    try {
-      const url = getAllURL;
-      var rawResponse = await axios({
-        url: url,
-        method: "GET",
+  const _call = () => {
+    const url = getAllURL;
+    axios
+      .get(url, {
         headers: {
-          "Content-Type": "application/json",
-          spaceId: spaceId
+          "Content-Type": "application/json"
         }
+      })
+      .then(response => {
+        _onOk(response.data ? response.data : undefined);
+      })
+      .catch(error => {
+        if (error.response) {
+          const status = error.response.status;
+          switch (status) {
+            case 200:
+              break;
+            case 400:
+              _onBadRequest();
+              break;
+            case 401:
+              _unAuthorized();
+              break;
+            case 404:
+              _notFound();
+              break;
+            case 500:
+              _onServerError();
+              break;
+            default:
+              _unKnownError();
+              break;
+          }
+        } else _unKnownError();
       });
-
-      const status = rawResponse.status;
-      const result = await rawResponse.data;
-      switch (status) {
-        case 200:
-          _onOk(result);
-          break;
-        case 400:
-          _onBadRequest();
-          break;
-        case 401:
-          _unAuthorized();
-          break;
-        case 404:
-          _notFound();
-          break;
-        case 500:
-          _onServerError();
-          break;
-        default:
-          _unKnownError();
-          break;
-      }
-    } catch (error) {
-      _onRequestError();
-    }
   };
 
   return {

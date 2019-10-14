@@ -17,6 +17,7 @@ import PrivateRoute from "./hoc/PrivateRoute";
 import withResolver from "./hoc/withResolver";
 import Login from "./Pages/Login";
 import MainPage from "./Pages/MainPage";
+import AxiosInitializer from "utils/axiosInitializer";
 const Signup = lazy(() => import("./Pages/Signup"));
 const ForgotPassword = lazy(() => import("./Pages/ForgotPassword"));
 const Upsert = lazy(() => import("./Pages/UpsertContent"));
@@ -44,51 +45,54 @@ const App = props => {
   const pathName = window.location.pathname;
   const lang = pathName.split("/")[1];
   let appLang = possibleLangs[lang] ? lang : "fa";
+  const spaceId = pathName.split("/")[2];
 
   return (
-    <StateProvider>
+    <StateProvider spaceId={spaceId}>
       <LocaleProvider lang={appLang}>
-        <BrowserRouter>
-          <Suspense fallback={<div />}>
-            <Switch>
-              <Route
-                exact
-                key="login"
-                path="/:lang/login"
-                render={props => <Login {...props} />}
-              />
-              <Route
-                key="signup"
-                path="/:lang/signup"
-                render={props => <Signup {...props} />}
-              />
-              <Route
-                key="forgotPassword"
-                path="/:lang/forgotPassword"
-                render={props => <ForgotPassword {...props} />}
-              />
-              <PrivateRoute
-                key="viewRequest"
-                path="/:lang/request/view/:id"
-                render={props => <ViewRequest {...props} />}
-              />
-              <PrivateRoute
-                key="addOffer"
-                path="/:lang/offer/new/:id"
-                render={props => <AddOffer {...props} />}
-              />
-              <PrivateRoute
-                key="panel"
-                path="/:lang"
-                render={props => <Main {...props} />}
-              />
-
-              <Redirect from="/" to={`/fa/newApplications`} />
-            </Switch>
-          </Suspense>
-        </BrowserRouter>
+        <AxiosInitializer spaceId={spaceId}>
+          <BrowserRouter basename={`/${appLang}/${spaceId}`}>
+            <Suspense fallback={<div />}>
+              <Switch>
+                <Route
+                  exact
+                  key="login"
+                  path="/login"
+                  render={props => <Login {...props} />}
+                />
+                <Route
+                  key="signup"
+                  path="/signup"
+                  render={props => <Signup {...props} />}
+                />
+                <Route
+                  key="forgotPassword"
+                  path="/forgotPassword"
+                  render={props => <ForgotPassword {...props} />}
+                />
+                <PrivateRoute
+                  key="viewRequest"
+                  path="/request/view/:id"
+                  render={props => <ViewRequest {...props} />}
+                />
+                <PrivateRoute
+                  key="addOffer"
+                  path="/offer/new/:id"
+                  render={props => <AddOffer {...props} />}
+                />
+                <PrivateRoute
+                  key="panel"
+                  path=""
+                  render={props => <Main {...props} />}
+                />
+                <Redirect from="/" to={`/notFound`} />
+                {/* <Route component={NotFound} /> */}
+              </Switch>
+            </Suspense>
+          </BrowserRouter>
+          <Notifies />
+        </AxiosInitializer>
       </LocaleProvider>
-      <Notifies />
     </StateProvider>
   );
 };

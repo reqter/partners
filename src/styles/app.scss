@@ -400,3 +400,11 @@ div::-moz-scrollbar-thumb:hover {
     justify-content: center;
   }
 }
+
+.page-empty-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

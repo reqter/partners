@@ -22,12 +22,12 @@ const ProfileWidget = props => {
     setToken(undefined);
     dispatch({
       type: "LOGOUT",
-      value: false,
+      value: false
     });
-    history.replace(`/${currentLang}/login`);
+    history.replace(`/login`);
   }
   function showProfile() {
-    history.push(`/${currentLang}/profile`);
+    history.push(`/profile`);
   }
 
   return (

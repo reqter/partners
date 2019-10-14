@@ -1,9 +1,9 @@
 import React from "react";
 import { NavLink  } from "react-router-dom";
-import { useLocale } from "../../../../../../hooks";
+import { useLocale } from "hooks";
 
 const LinkItem = ({ link }) => {
-  const { appLocale, t, currentLang } = useLocale();
+  const { t } = useLocale();
   const icon = `linkIcon icon-${link.icon}`;
   return (
       <NavLink  to={link.path} className="linkItem" activeClassName="linkItemSelected">

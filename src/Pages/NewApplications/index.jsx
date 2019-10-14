@@ -104,7 +104,7 @@ const NewApplications = props => {
           });
         }
       })
-      .call(spaceInfo.id);
+      .call();
   }
   // methods
   const imgs = ["jpg", "jpeg", "gif", "bmp", "png"];
@@ -143,10 +143,10 @@ const NewApplications = props => {
   }
 
   function handleItemViewClicked(row) {
-    props.history.push(`/${currentLang}/request/view/${row._id}`);
+    props.history.push(`/request/view/${row._id}`);
   }
   function handleItemOpenClicked(row) {
-    props.history.push(`/${currentLang}/offer/new/${row._id}`);
+    props.history.push(`/offer/new/${row._id}`);
   }
   //#endregion controller
 

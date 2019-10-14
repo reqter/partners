@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from "react";
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { Switch } from "react-router-dom";
 //
 import SideBar from "./components/SideBar";
 import "./styles.scss";
@@ -19,12 +19,12 @@ const MainPage = props => {
           <Switch>
             <PrivateRoute
               key="profile"
-              path="/:lang/profile"
+              path="/profile"
               render={props => <Profile {...props} />}
             />
             <PrivateRoute
               key="newApplications"
-              path="/:lang/newApplications"
+              path="/newApplications"
               render={props => <NewApplications {...props} />}
             />
           </Switch>

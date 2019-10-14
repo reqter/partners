@@ -8,7 +8,7 @@ import "./styles.scss";
 import { useGlobalState, useCookie, useLocale } from "./../../hooks";
 
 const Login = props => {
-  const [{}, dispatch] = useGlobalState();
+  const [{ spaceId }, dispatch] = useGlobalState();
   const { appLocale, t, currentLang } = useLocale();
   const [token, setToken] = useCookie("partner_token");
   const [spinner, toggleSpinner] = useState(false);
@@ -86,9 +86,9 @@ const Login = props => {
   }
   useEffect(() => {
     if (redirectToReferrer) {
-      props.history.replace(
+      props.history.push(
         !props.location.state
-          ? "/" + currentLang + "/newApplications"
+          ? `/newApplications`
           : props.location.state.from.pathname
       );
     }
@@ -140,9 +140,7 @@ const Login = props => {
                   {t("LOGIN_PASSWORD_INPUT_DESCRIPTION")}
                 </small>
               </div>
-              <Link to={"/" + currentLang + "/forgotPassword"}>
-                {t("LOGIN_FORGOT_PASS")}
-              </Link>
+              <Link to="/forgotPassword">{t("LOGIN_FORGOT_PASS")}</Link>
               <button
                 type="submit"
                 className="btn btn-primary btn-block btn-submit"
@@ -165,12 +163,9 @@ const Login = props => {
 
         <div className="wrapper__signUpBox">
           <span>{t("LOGIN_SIGNUP_LINK_TITLE")}&nbsp;</span>
-          <Link to={"/" + currentLang + "/signup"}>
-            {t("LOGIN_SIGNUP_LINK")}
-          </Link>
+          <Link to="/signup">{t("LOGIN_SIGNUP_LINK")}</Link>
         </div>
       </div>
-    
     </div>
   );
 };

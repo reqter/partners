@@ -82,7 +82,7 @@ const ForgotPassword = props => {
   //#endregion first tab
   //#region second tab
   function navToLogin() {
-    props.history.push(`/${currentLang}/login`);
+    props.history.push(`/login`);
   }
   //#endregion second tab
   return (
@@ -192,9 +192,7 @@ const ForgotPassword = props => {
               {t("SIGNUP_LOGIN_LINK_TITLE")}
               &nbsp;
             </span>
-            <Link to={"/" + currentLang + "/login"}>
-              {t("SIGNUP_LOGIN_LINK")}
-            </Link>
+            <Link to="/login">{t("SIGNUP_LOGIN_LINK")}</Link>
           </div>
         )}
       </div>
